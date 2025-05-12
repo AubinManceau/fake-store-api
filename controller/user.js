@@ -29,48 +29,48 @@ module.exports.getUser = (req, res) => {
 		.catch((err) => console.log(err));
 };
 
-module.exports.addUser = (req, res) => {
-	if (typeof req.body == undefined) {
-		res.json({
-			status: 'error',
-			message: 'data is undefined',
+module.exports.addUser = async (req, res) => {
+	if (!req.body) {
+		return res.json({
+		status: 'error',
+		message: 'data is undefined',
 		});
-	} else {
-		let userCount = 0;
-		User.find()
-			.countDocuments(function (err, count) {
-				userCount = count;
-			})
-			.then(() => {
-				const user = new User({
-					id: userCount + 1,
-					email: req.body.email,
-					username: req.body.username,
-					password: req.body.password,
-					name: {
-						firstname: req.body.firstname,
-						lastname: req.body.lastname,
-					},
-					address: {
-						city: req.body.address.city,
-						street: req.body.address.street,
-						number: req.body.number,
-						zipcode: req.body.zipcode,
-						geolocation: {
-							lat: req.body.address.geolocation.lat,
-							long: req.body.address.geolocation.long,
-						},
-					},
-					phone: req.body.phone,
-				});
-				user.save()
-				  .then(user => res.json(user))
-				  .catch(err => console.log(err))
+	}
 
-				res.json(user);
-			});
+	try {
+		const userCount = await User.countDocuments();
 
-		res.json({id:User.find().count()+1,...req.body})
+		const user = new User({
+		id: userCount + 1,
+		email: req.body.email,
+		username: req.body.username,
+		password: req.body.password,
+		name: {
+			firstname: req.body.firstname,
+			lastname: req.body.lastname,
+		},
+		address: {
+			city: req.body.address.city,
+			street: req.body.address.street,
+			number: req.body.number,
+			zipcode: req.body.zipcode,
+			geolocation: {
+			lat: req.body.address.geolocation.lat,
+			long: req.body.address.geolocation.long,
+			},
+		},
+		phone: req.body.phone,
+		});
+
+		const savedUser = await user.save();
+		res.json(savedUser);
+	} catch (err) {
+		console.error(err);
+		res.status(500).json({
+		status: 'error',
+		message: 'Error while creating user',
+		error: err.message,
+		});
 	}
 };
 

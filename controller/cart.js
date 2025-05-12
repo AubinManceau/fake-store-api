@@ -47,34 +47,34 @@ module.exports.getSingleCart = (req, res) => {
 		.catch((err) => console.log(err));
 };
 
-module.exports.addCart = (req, res) => {
-	if (typeof req.body == undefined) {
-		res.json({
-			status: 'error',
-			message: 'data is undefined',
-		});
-	} else {
-		let cartCount = 0;
-		Cart.find().countDocuments(function (err, count) {
-		  cartCount = count
-		  })
+module.exports.addCart = async (req, res) => {
+  if (!req.body) {
+    return res.json({
+      status: 'error',
+      message: 'data is undefined',
+    });
+  }
 
-		.then(() => {
-		const cart = {
-			id: cartCount + 1,
-			userId: req.body.userId,
-			date: req.body.date,
-			products: req.body.products,
-		};
-		cart.save()
-		  .then(cart => res.json(cart))
-		  .catch(err => console.log(err))
+  try {
+    const cartCount = await Cart.countDocuments();
 
-		res.json(cart);
-		})
+    const cart = new Cart({
+      id: cartCount + 1,
+      userId: req.body.userId,
+      date: req.body.date,
+      products: req.body.products,
+    });
 
-		res.json({...req.body,id:Cart.find().count()+1})
-	}
+    const savedCart = await cart.save();
+    res.json(savedCart);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      status: 'error',
+      message: 'Error while creating cart',
+      error: err.message,
+    });
+  }
 };
 
 module.exports.editCart = (req, res) => {

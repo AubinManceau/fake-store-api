@@ -52,33 +52,36 @@ module.exports.getProductsInCategory = (req, res) => {
 		.catch((err) => console.log(err));
 };
 
-module.exports.addProduct = (req, res) => {
-	if (typeof req.body == undefined) {
-		res.json({
-			status: 'error',
-			message: 'data is undefined',
-		});
-	} else {
-		let productCount = 0;
-		Product.find()
-		  .countDocuments(function (err, count) {
-		    productCount = count;
-		  })
-		  .then(() => {
-		const product = {
-			id: productCount + 1,
-			title: req.body.title,
-			price: req.body.price,
-			description: req.body.description,
-			image: req.body.image,
-			category: req.body.category,
-		};
-		product.save()
-		  .then(product => res.json(product))
-		  .catch(err => console.log(err))
-		res.json(product);
-		});
-	}
+module.exports.addProduct = async (req, res) => {
+  if (!req.body) {
+    return res.json({
+      status: 'error',
+      message: 'data is undefined',
+    });
+  }
+
+  try {
+    const productCount = await Product.countDocuments();
+
+    const product = new Product({
+      id: productCount + 1,
+      title: req.body.title,
+      price: req.body.price,
+      description: req.body.description,
+      image: req.body.image,
+      category: req.body.category,
+    });
+
+    const savedProduct = await product.save();
+    res.json(savedProduct);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      status: 'error',
+      message: 'An error occurred while saving the product',
+      error: err.message,
+    });
+  }
 };
 
 module.exports.editProduct = (req, res) => {
