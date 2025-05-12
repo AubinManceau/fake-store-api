@@ -42,7 +42,7 @@ app.use('/auth', authRoute);
 
 //mongoose
 mongoose
-	.connect(process.env.DATABASE_URL, { useNewUrlParser: true })
+	.connect(process.env.DATABASE_URL)
 	.then(() => {
 		app.listen(port, () => {
 			console.log('connect');
