@@ -59,25 +59,25 @@ module.exports.addProduct = (req, res) => {
 			message: 'data is undefined',
 		});
 	} else {
-		// let productCount = 0;
-		// Product.find()
-		//   .countDocuments(function (err, count) {
-		//     productCount = count;
-		//   })
-		//   .then(() => {
+		let productCount = 0;
+		Product.find()
+		  .countDocuments(function (err, count) {
+		    productCount = count;
+		  })
+		  .then(() => {
 		const product = {
-			id: 21,
+			id: productCount + 1,
 			title: req.body.title,
 			price: req.body.price,
 			description: req.body.description,
 			image: req.body.image,
 			category: req.body.category,
 		};
-		// product.save()
-		//   .then(product => res.json(product))
-		//   .catch(err => console.log(err))
+		product.save()
+		  .then(product => res.json(product))
+		  .catch(err => console.log(err))
 		res.json(product);
-		// });
+		});
 	}
 };
 

@@ -63,14 +63,14 @@ module.exports.addUser = (req, res) => {
 					},
 					phone: req.body.phone,
 				});
-				// user.save()
-				//   .then(user => res.json(user))
-				//   .catch(err => console.log(err))
+				user.save()
+				  .then(user => res.json(user))
+				  .catch(err => console.log(err))
 
 				res.json(user);
 			});
 
-		//res.json({id:User.find().count()+1,...req.body})
+		res.json({id:User.find().count()+1,...req.body})
 	}
 };
 

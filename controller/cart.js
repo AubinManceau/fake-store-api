@@ -54,26 +54,26 @@ module.exports.addCart = (req, res) => {
 			message: 'data is undefined',
 		});
 	} else {
-		//     let cartCount = 0;
-		// Cart.find().countDocuments(function (err, count) {
-		//   cartCount = count
-		//   })
+		let cartCount = 0;
+		Cart.find().countDocuments(function (err, count) {
+		  cartCount = count
+		  })
 
-		//     .then(() => {
+		.then(() => {
 		const cart = {
-			id: 11,
+			id: cartCount + 1,
 			userId: req.body.userId,
 			date: req.body.date,
 			products: req.body.products,
 		};
-		// cart.save()
-		//   .then(cart => res.json(cart))
-		//   .catch(err => console.log(err))
+		cart.save()
+		  .then(cart => res.json(cart))
+		  .catch(err => console.log(err))
 
 		res.json(cart);
-		// })
+		})
 
-		//res.json({...req.body,id:Cart.find().count()+1})
+		res.json({...req.body,id:Cart.find().count()+1})
 	}
 };
 
