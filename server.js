@@ -22,7 +22,10 @@ const userRoute = require('./routes/user');
 const authRoute = require('./routes/auth');
 
 //middleware
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:443',
+  credentials: true
+}));
 
 app.use(express.static(path.join(__dirname, '/public')));
 app.use(express.urlencoded({ extended: true }));
