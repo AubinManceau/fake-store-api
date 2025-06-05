@@ -45,21 +45,6 @@ module.exports.addUser = async (req, res) => {
 		email: req.body.email,
 		username: req.body.username,
 		password: req.body.password,
-		name: {
-			firstname: req.body.firstname,
-			lastname: req.body.lastname,
-		},
-		address: {
-			city: req.body.address.city,
-			street: req.body.address.street,
-			number: req.body.number,
-			zipcode: req.body.zipcode,
-			geolocation: {
-			lat: req.body.address.geolocation.lat,
-			long: req.body.address.geolocation.long,
-			},
-		},
-		phone: req.body.phone,
 		});
 
 		const savedUser = await user.save();
@@ -86,21 +71,6 @@ module.exports.editUser = (req, res) => {
 			email: req.body.email,
 			username: req.body.username,
 			password: req.body.password,
-			name: {
-				firstname: req.body.firstname,
-				lastname: req.body.lastname,
-			},
-			address: {
-				city: req.body.address.city,
-				street: req.body.address.street,
-				number: req.body.number,
-				zipcode: req.body.zipcode,
-				geolocation: {
-					lat: req.body.address.geolocation.lat,
-					long: req.body.address.geolocation.long,
-				},
-			},
-			phone: req.body.phone,
 		});
 	}
 };
