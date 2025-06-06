@@ -86,13 +86,14 @@ module.exports.editCart = async (req, res) => {
 	}
 	
 	try {
+		const updateData = {};
+		if (req.body.userId !== undefined) updateData.userId = req.body.userId;
+		if (req.body.date !== undefined) updateData.date = req.body.date;
+		if (req.body.products !== undefined) updateData.products = req.body.products;
+		
 		const updatedCart = await Cart.findOneAndUpdate(
 			{ id: req.params.id },
-			{
-				userId: req.body.userId,
-				date: req.body.date,
-				products: req.body.products,
-			},
+			updateData,
 			{ new: true }
 		).select('-_id -products._id');
 
