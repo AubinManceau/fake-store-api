@@ -102,20 +102,35 @@ module.exports.editProduct = (req, res) => {
 	}
 };
 
-module.exports.deleteProduct = (req, res) => {
+module.exports.deleteProduct = async (req, res) => {
 	if (req.params.id == null) {
-		res.json({
+		return res.json({
 			status: 'error',
-			message: 'cart id should be provided',
+			message: 'product id should be provided',
 		});
-	} else {
-		Product.findOne({
-			id: req.params.id,
-		})
-			.select(['-_id'])
-			.then((product) => {
-				res.json(product);
-			})
-			.catch((err) => console.log(err));
+	}
+	
+	try {
+		const deletedProduct = await Product.findOneAndDelete({ id: req.params.id });
+		
+		if (!deletedProduct) {
+			return res.status(404).json({
+				status: 'error',
+				message: 'Product not found',
+			});
+		}
+		
+		res.json({
+			status: 'success',
+			message: 'Product has been deleted',
+			deletedProduct: deletedProduct
+		});
+	} catch (err) {
+		console.error(err);
+		res.status(500).json({
+			status: 'error',
+			message: 'An error occurred while deleting the product',
+			error: err.message
+		});
 	}
 };

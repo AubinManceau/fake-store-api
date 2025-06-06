@@ -95,16 +95,33 @@ module.exports.editCart = (req, res) => {
 
 module.exports.deleteCart = (req, res) => {
 	if (req.params.id == null) {
-		res.json({
+		return res.json({
 			status: 'error',
 			message: 'cart id should be provided',
 		});
-	} else {
-		Cart.findOne({ id: req.params.id })
-			.select('-_id -products._id')
-			.then((cart) => {
-				res.json(cart);
-			})
-			.catch((err) => console.log(err));
 	}
+	
+	Cart.findOneAndDelete({ id: req.params.id })
+		.select('-_id -products._id')
+		.then((deletedCart) => {
+			if (!deletedCart) {
+				return res.status(404).json({
+					status: 'error',
+					message: 'Cart not found',
+				});
+			}
+			res.json({
+				status: 'success',
+				message: 'Cart deleted successfully',
+				deletedCart: deletedCart
+			});
+		})
+		.catch((err) => {
+			console.log(err);
+			res.status(500).json({
+				status: 'error',
+				message: 'Error while deleting cart',
+				error: err.message
+			});
+		});
 };

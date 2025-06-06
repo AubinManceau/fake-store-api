@@ -77,16 +77,31 @@ module.exports.editUser = (req, res) => {
 
 module.exports.deleteUser = (req, res) => {
 	if (req.params.id == null) {
-		res.json({
+		return res.json({
 			status: 'error',
-			message: 'cart id should be provided',
+			message: 'user id should be provided',
 		});
-	} else {
-		User.findOne({ id: req.params.id })
-			.select(['-_id'])
-			.then((user) => {
-				res.json(user);
-			})
-			.catch((err) => console.log(err));
 	}
+
+	User.deleteOne({ id: req.params.id })
+		.then((result) => {
+			if (result.deletedCount === 0) {
+				return res.status(404).json({
+					status: 'error',
+					message: 'User not found',
+				});
+			}
+			res.json({
+				status: 'success',
+				message: 'User deleted successfully',
+			});
+		})
+		.catch((err) => {
+			console.error(err);
+			res.status(500).json({
+				status: 'error',
+				message: 'Error deleting user',
+				error: err.message,
+			});
+		});
 };
