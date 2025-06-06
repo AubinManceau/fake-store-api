@@ -77,18 +77,39 @@ module.exports.addCart = async (req, res) => {
   }
 };
 
-module.exports.editCart = (req, res) => {
-	if (typeof req.body == undefined || req.params.id == null) {
-		res.json({
+module.exports.editCart = async (req, res) => {
+	if (!req.body || req.params.id == null) {
+		return res.json({
 			status: 'error',
 			message: 'something went wrong! check your sent data',
 		});
-	} else {
-		res.json({
-			id: parseInt(req.params.id),
-			userId: req.body.userId,
-			date: req.body.date,
-			products: req.body.products,
+	}
+	
+	try {
+		const updatedCart = await Cart.findOneAndUpdate(
+			{ id: req.params.id },
+			{
+				userId: req.body.userId,
+				date: req.body.date,
+				products: req.body.products,
+			},
+			{ new: true }
+		).select('-_id -products._id');
+
+		if (!updatedCart) {
+			return res.status(404).json({
+				status: 'error',
+				message: 'Cart not found',
+			});
+		}
+		
+		res.json(updatedCart);
+	} catch (err) {
+		console.error(err);
+		res.status(500).json({
+			status: 'error',
+			message: 'Error while updating cart',
+			error: err.message,
 		});
 	}
 };
