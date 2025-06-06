@@ -23,8 +23,8 @@ const authRoute = require('./routes/auth');
 
 //middleware
 app.use(cors({
-  origin: 'http://31.207.34.237:443',
-  credentials: true
+	origin: ['http://31.207.34.237:443', 'http://localhost:443'],
+	credentials: true
 }));
 
 app.use(express.static(path.join(__dirname, '/public')));
